@@ -93,7 +93,6 @@ class Catalog
             file.write part
         file.end ->
           File.rename tmpfile, filename, callback
-          callback null
       catch error
         callback error
 
