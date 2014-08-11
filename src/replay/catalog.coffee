@@ -149,7 +149,12 @@ parseHeaders = (filename, header_lines, only = null)->
     continue if only && !match(name, only)
 
     key = (name || "").toLowerCase()
-    value = (value || "").trim().replace(/^"(.*)"$/, "$1")
+    if /REGEXP\s/.test(value)
+      regexpHeader = value.split("REGEXP ")[1]
+      [_, in_regexp, flags] = regexpHeader.match(/^\/(.+)\/(i|m|g)?$/)
+      value = new RegExp(in_regexp, flags || "")
+    else
+      value = (value || "").trim().replace(/^"(.*)"$/, "$1")
     if Array.isArray(headers[key])
       headers[key].push value
     else if headers[key]

@@ -79,7 +79,10 @@ class Matcher
       return false if @query && @query != url.query
     return false unless @method == method
     for name, value of @headers
-      return false if value != headers[name]
+      if value instanceof RegExp
+        return false if !value.test(headers[name])
+      else
+        return false if value != headers[name]
     if body
       data = ""
       for chunks in body
