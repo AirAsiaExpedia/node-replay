@@ -94,6 +94,7 @@ class ProxyRequest extends HTTP.ClientRequest
         else if captured
           response = new ProxyResponse(captured)
           @emit "response", response
+          response.emit("readable") if response.emit
           response.resume()
         else
           error = new Error("#{@method} #{URL.format(@url)} refused: not recording and no network access")
@@ -144,6 +145,9 @@ class ProxyResponse extends Stream
         @readable = false
         @_done = true
         @emit "end"
+
+  read: ->
+    @_body[0]
 
   setEncoding: (@_encoding)->
 
