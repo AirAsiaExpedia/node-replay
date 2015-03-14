@@ -86,7 +86,7 @@ class Catalog
         file.write "#{response.status || 200} HTTP/#{response.version || "1.1"}\n"
         writeHeaders file, response.headers
         file.write "\n"
-        if response.headers['content-encoding'] && response.headers['content-encoding'].match(/(gzip|deflate)/)
+        if isBinary response.headers
           file.write Buffer.concat(response.body).toString('base64')
         else
           for part in response.body
@@ -128,7 +128,7 @@ class Catalog
         status = parseInt(status_line.split()[0], 10)
         version = status_line.match(/\d.\d$/)
         headers = parseHeaders(filename, header_lines)
-        if headers['content-encoding'] && headers['content-encoding'].match(/(gzip|deflate)/)
+        if isBinary headers
           body =  new Buffer body.join(), 'base64'
         else
           body = body.join("\n\n")
@@ -163,6 +163,9 @@ parseHeaders = (filename, header_lines, only = null)->
       headers[key] = value
   return headers
 
+isBinary = (headers)->
+  return headers['content-type'] == 'application/octet-stream' ||
+    /(gzip|deflate)/.test headers['content-encoding']
 
 # Write headers to the File object.  Optional argument `only` is an array of
 # regular expressions; only headers matching one of these expressions are

@@ -31,11 +31,11 @@ Replay.silent = true
 
 # Redirect HTTP requests to pass-through domain
 original_lookup = DNS.lookup
-DNS.lookup = (domain, callback)->
+DNS.lookup = (domain, options, callback)->
   if domain == "pass-through"
     callback null, "127.0.0.1", 4
   else
-    original_lookup domain, callback
+    original_lookup domain, options, callback
 
 
 # Serve pages from localhost.
