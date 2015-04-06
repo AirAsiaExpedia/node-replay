@@ -1,10 +1,13 @@
 passThrough = require("./pass_through")
-
+URL         = require("url")
 
 recorded = (settings)->
   catalog = settings.catalog
   capture = passThrough(true)
   return (request, callback)->
+    if typeof request.url == 'string'
+      request.url = URL.parse request.url
+      request.path = request.url.path
     host = request.url.hostname
     if request.url.port && request.url.port != "80"
       host += ":#{request.url.port}"
